@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package com.ribbontek.stubs.streamer.player;
+
+import "google/protobuf/empty.proto";
+option java_multiple_files = true;
+option java_package = "com.ribbontek.stubs.streamer.player";
+
+enum PlayerDirection {
+  NORTH = 0;
+  EAST = 1;
+  SOUTH = 2;
+  WEST = 3;
+}
+
+enum PlayerState {
+  ALIVE = 0;
+  DEAD = 1;
+}
+
+enum PlayerAction {
+  MOVE = 0;
+  STRIKE = 1;
+}
+
+message Position {
+  int32 xPos = 1;
+  int32 yPos = 2;
+}
+
+message PlayerRequest {
+  int32 player_id = 1;
+  string player_name = 2;
+  optional PlayerAction action = 3;
+  optional PlayerDirection direction = 4;
+}
+
+message PlayerResponse {
+  int32 player_id = 1;
+  string player_name = 2;
+  PlayerState state = 3;
+  Position position = 5;
+}
+
+message PlayerStreamRequest {
+  string session_id = 1;
+  PlayerRequest player = 2;
+}
+
+message PlayerStreamResponse {
+  string session_id = 1;
+  string session_state = 2;
+  repeated PlayerResponse players = 3;
+}
+
+message MyStatsResponse {
+  int32 player_id = 1;
+  int32 game_count = 2;
+  int32 stats = 3;
+}
+
+// The Player Stream Service
+service PlayerStreamService {
+  rpc GetPlayerStream(stream PlayerStreamRequest) returns (stream PlayerStreamResponse) {}
+
+  rpc GetStatsStream(google.protobuf.Empty) returns (stream MyStatsResponse) {}
+}
+
